@@ -1,0 +1,46 @@
+/* Dialog */
+.popup-overlay.dialog .popup-popup {
+    width: 400px;
+}
+.popup-overlay.dialog .popup-popup header {
+    padding: 7px 0;
+    background-color: #135e96;
+}
+.popup-overlay.dialog .popup-popup header.no-title {
+    background-color: #fff;
+    padding: 4px;
+}
+.popup-overlay.dialog .popup-popup header h2 {
+    color: #fff;
+    font-size: 16px;
+}
+.popup-overlay.dialog .popup-popup article {
+    padding: 1.25rem 1.25rem 0.5rem;
+    /* text-align: center; */
+    font-size: 14px;
+}
+.popup-overlay.dialog.prompt label {
+    display: block;
+    margin-bottom: 8px;
+}
+.popup-overlay.dialog.prompt input {
+    width: 100%;
+    outline: none;
+}
+
+.popup-overlay .popup-popup header,
+.popup-overlay .popup-popup .footer-buttons button.button-primary,
+.popup-overlay .popup-popup header .close-popup {
+    color: #fff;
+    background-color: #135e96;
+}
+
+.popup-overlay .popup-popup .footer-buttons button.button-primary {
+    border: 1px solid #084370;
+}
+
+.popup-overlay .popup-popup .footer-buttons button.button-secondary {
+    color: #333;
+    background-color: #e9e9e9;
+    border: 1px solid #ddd;
+}
