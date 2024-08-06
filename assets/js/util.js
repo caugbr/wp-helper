@@ -182,18 +182,9 @@ function getStyle(elem, prop = '') {
     return styles;
 }
 
-// function cssToJs(cssProperty) {
-//     return cssProperty.replace(/-([a-z])/g, (match, letter) => letter.toUpperCase());
-// }
-
-// function jsToCss(jsProperty) {
-//     return jsProperty.replace(/([A-Z])/g, (match, letter) => '-' + letter.toLowerCase());
-// }
-
 function currentStyle(elem, prop = '') {
     const para = $single(elem);
     const compStyles = window.getComputedStyle(para);
-    // console.log(compStyles)
     if (prop && typeof prop == 'string') {
         console.log(prop, toCamelCase(prop), compStyles.getPropertyValue(toSlug(prop)))
         return compStyles.getPropertyValue(toSlug(prop));
@@ -207,7 +198,6 @@ function currentStyle(elem, prop = '') {
         const jsProperty = toCamelCase(cssProperty);
         styleObject[jsProperty] = compStyles.getPropertyValue(cssProperty);
     }
-    // console.log(styleObject)
     return styleObject;
 }
 

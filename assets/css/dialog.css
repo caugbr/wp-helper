@@ -44,3 +44,13 @@
     background-color: #e9e9e9;
     border: 1px solid #ddd;
 }
+
+.popup-overlay.dialog.transparent .popup-popup article {
+    padding: 0;
+}
+
+.popup-overlay.dialog.transparent .popup-popup {
+    background-color: rgba(0, 0, 0, 0);
+    display: inline-block;
+    width: auto;
+}

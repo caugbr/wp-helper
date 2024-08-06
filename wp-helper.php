@@ -83,7 +83,7 @@ class WpHelper {
         $this->unique_terms[] = compact('post_type', 'taxonomy');
     }
 
-    public function add_style($id, $url, $deps = [], $condition = '__return_true') {
+    public function add_style($id, $url = NULL, $deps = [], $condition = '__return_true') {
         $this->styles[$id] = [
             "id" => $id,
             "url" => $url,
@@ -92,11 +92,24 @@ class WpHelper {
         ];
     }
 
-    public function add_script($id, $url, $deps = [], $condition = '__return_true') {
+    /**
+     * Undocumented function
+     *
+     * @param string    $id         Script ID handler
+     * @param string    $url        Script URL
+     * @param array     $deps       Script dependencies
+     * @param boolean   $module     True if script should be loaded as an ES6 module
+     * @param array     $localize   Array with two elements: ['variable_name', [(associative array)]]
+     * @param mixed     $condition  Some callable function to define if script should be loaded
+     * @return void
+     */
+    public function add_script($id, $url, $deps = [], $module = false, $localize = null, $condition = '__return_true') {
         $this->scripts[$id] = [
             "id" => $id,
             "url" => $url,
             "deps" => $deps,
+            "is_module" => $module,
+            "localize" => $localize,
             "condition" => $condition
         ];
     }
@@ -191,7 +204,19 @@ class WpHelper {
             if (!$this->enqueue_condition($scr)) {
                 continue;
             }
-            wp_enqueue_script($scr['id'], $scr['url'], $scr['deps']);
+            wp_register_script($scr['id'], $scr['url'], $scr['deps']);
+            wp_enqueue_script($scr['id']);
+            if (!empty($scr['localize']) && is_string($scr['localize'][0]) && is_array($scr['localize'][1])) {
+                wp_localize_script($scr['id'], $scr['localize'][0], $scr['localize'][1]);
+            }
+            if ($scr['is_module']) {
+                add_filter('wp_script_attributes', function ($attrs) use($scr) {
+                    if (isset( $attrs['id'] ) && $attrs['id'] === $scr['id'] . '-js') {
+                        $attrs['type'] = 'module';
+                    }
+                    return $attrs;
+                });
+            }
         }
     }
 

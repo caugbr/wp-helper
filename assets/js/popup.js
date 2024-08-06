@@ -7,6 +7,7 @@ class Popup {
     elementHasScrollbar = false;
     customClass = '';
     useCloseButton = true;
+    header = true;
     footer = true;
     footerChildren = [];
     stage = null;
@@ -66,16 +67,18 @@ class Popup {
             classes.forEach(cls => overlay.classList.add(cls));
         }
     
-        const header = tag('header');
-        popup.appendChild(header);
-        if (this.title) {
-            header.innerHTML = `<h2>${this.title}</h2>`;
-        } else {
-            header.classList.add('no-title');
+        if (this.header) {
+            const header = tag('header');
+            popup.appendChild(header);
+            if (this.title) {
+                header.innerHTML = `<h2>${this.title}</h2>`;
+            } else {
+                header.classList.add('no-title');
+            }
+        
+            const topBar = tag('div', { class: 'top-bar' });
+            header.appendChild(topBar);
         }
-    
-        const topBar = tag('div', { class: 'top-bar' });
-        header.appendChild(topBar);
     
         if (this.useCloseButton) {
             const close = tag('a', { href: '#', class: 'close-popup' }, '&times;');

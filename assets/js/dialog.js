@@ -100,12 +100,17 @@ class Dialog {
         });
     }
     
-    modal(content, title = '') {
-        this.pop.footerChildren = [];
+    modal(content) {
         this.pop.customClass = "dialog modal";
-        if (title) {
-            this.pop.setTitle(title);
-        }
+        this.pop.setContent(`<div class="content-modal">${content}</div>`);
+        this.pop.open();
+        return () => this.pop.close();
+    }
+    
+    transparent(content) {
+        this.pop.header = false;
+        this.pop.footer = false;
+        this.pop.customClass = "dialog transparent";
         this.pop.setContent(`<div class="content-modal">${content}</div>`);
         this.pop.open();
         return () => this.pop.close();
