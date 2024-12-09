@@ -451,6 +451,36 @@ class WpHelper {
 
 
 
+    /**
+     * Exclui arquivos criados há mais de $limit dias no diretório $path.
+     *
+     * @param string $path Caminho do diretório a ser varrido.
+     * @param int $limit Limite de idade dos arquivos, em dias.
+     * @return int Number of deleted files
+     */
+    public function purge_temp($path, $limit = 1) {
+        $deleted = 0;
+        if (is_dir($path)) {
+            $timeLimit = time() - ($limit * 86400);
+            $files = scandir($path);
+            foreach ($files as $file) {
+                $filePath = $path . DIRECTORY_SEPARATOR . $file;
+                if ($file === '.' || $file === '..') {
+                    continue;
+                }
+                if (is_file($filePath)) {
+                    $fileCreationTime = filemtime($filePath);
+                    if ($fileCreationTime < $timeLimit) {
+                        if (unlink($filePath)) {
+                           $deleted++;
+                        }
+                    }
+                }
+            }
+        }
+        return $deleted;
+    }
+
     // get permalink by title or slug and post type
     public function url_by_name($page_name, $post_type = 'page') {
         global $wpdb;
