@@ -17,6 +17,7 @@ class WpHelper {
     public $no_gutenberg_types = [];
     public $unique_terms = [];
     public $scripts = [];
+    public $priority_scripts = [];
     public $styles = [];
     public $tabs = [];
     public $roles = [];
@@ -28,7 +29,12 @@ class WpHelper {
 
     public function __construct() {
         $this->url = str_replace("\\", "/", plugin_dir_url(__FILE__));
+
+        $this->add_textdomain('wphelper', dirname(plugin_basename(__FILE__)) . '/langs/');
+
         add_action('init', [$this, 'load_textdomains']);
+        add_action('admin_enqueue_scripts', [$this, 'prioritize_scripts'], 9999);
+        add_action('wp_enqueue_scripts', [$this, 'prioritize_scripts'], 9999);
         add_action('admin_enqueue_scripts', [$this, 'load_js']);
         add_action('wp_enqueue_scripts', [$this, 'load_js']);
         add_action('wp_enqueue_scripts', [$this, 'load_styles']);
@@ -37,6 +43,7 @@ class WpHelper {
         add_action('registered_post_type', [$this, 'me_first']);
         add_action('admin_footer', [$this, 'init_js']);
         $this->functionalities = [
+            "actions" => [ "js" => $this->url . 'assets/js/actions.js' ],
             "cookies" => [ "js" => $this->url . 'assets/js/cookies.js' ],
             "locations-ibge" => [ "js" => $this->url . 'assets/js/locations-ibge.js' ],
             "popup" => [
@@ -124,9 +131,10 @@ class WpHelper {
         if (isset($this->functionalities[$func])) {
             if (is_callable($cond) && call_user_func($cond, $func)) {
                 $f = $this->functionalities[$func];
-                $act = ($context == 'admin' ? 'admin' : 'wp') . '_enqueue_scripts';
+                $act = ($context == 'wp' ? 'wp' : 'admin') . '_enqueue_scripts';
                 $fnc = function() use($func, $f) {
                     wp_enqueue_script($func, $f['js']);
+                    $this->priority_scripts[] = $func;
                     if (isset($f['css'])) {
                         wp_enqueue_style($func, $f['css']);
                     }
@@ -141,8 +149,8 @@ class WpHelper {
 
     public function load_js() {
         wp_enqueue_script('wp-helper-util', $this->url . 'assets/js/util.js');
-        wp_enqueue_script('wp-helper-color', $this->url . 'assets/js/color.js');
-        wp_enqueue_script('wp-helper-css', $this->url . 'assets/js/style.js');
+        // wp_enqueue_script('wp-helper-color', $this->url . 'assets/js/color.js');
+        // wp_enqueue_script('wp-helper-css', $this->url . 'assets/js/style.js');
         if (is_admin()) {
             wp_enqueue_script('wp-helper-unique-cat', $this->url . 'assets/js/unique-cat.js');
         }
@@ -220,6 +228,29 @@ class WpHelper {
         }
     }
 
+    public function prioritize_scripts() {
+        // Array com os IDs dos scripts que você deseja priorizar.
+        // $priority_scripts = array('script-id-1', 'script-id-2', 'script-id-3');
+    
+        global $wp_scripts;
+    
+        if (isset($wp_scripts->registered)) {
+            // Cria um array temporário para armazenar os scripts prioritários.
+            $prioritized = array();
+            
+            // Itera sobre os scripts prioritários e move-os para o início.
+            foreach ($this->priority_scripts as $script_id) {
+                if (isset($wp_scripts->registered[$script_id])) {
+                    $prioritized[$script_id] = $wp_scripts->registered[$script_id];
+                    unset($wp_scripts->registered[$script_id]);
+                }
+            }
+    
+            // Reatribui os scripts prioritários ao início do array registered.
+            $wp_scripts->registered = $prioritized + $wp_scripts->registered;
+        }
+    }
+
     public function init_js() {
         $js = [];
         foreach ($this->unique_terms as $ut) {
@@ -263,28 +294,28 @@ class WpHelper {
             "singular_name" => $singular,
             "menu_name" => $plural,
             "name_admin_bar" => $singular,
-            "archives" => sprintf(__("%s Archives", 'pouso'), $singular),
-            "attributes" => sprintf(__("%s Attributes", 'pouso'), $singular),
-            "parent_item_colon" => sprintf(__("Parent %s:", 'pouso'), $singular),
-            "all_items" => sprintf(__("All %s", 'pouso'), $plural),
-            "add_new" => sprintf(__("Add %s", 'pouso'), $singular),
-            "add_new_item" => sprintf(__("Add New %s", 'pouso'), $singular),
-            "new_item" => sprintf(__("New %s", 'pouso'), $singular),
-            "edit_item" => sprintf(__("Edit %s", 'pouso'), $singular),
-            "update_item" => sprintf(__("Update %s", 'pouso'), $singular),
-            "view_item" => sprintf(__("View %s", 'pouso'), $singular),
-            "view_items" => sprintf(__("View %s", 'pouso'), $plural),
-            "search_items" => sprintf(__("Search %s", 'pouso'), $singular),
-            "insert_into_item" => sprintf(__("Insert into %s", 'pouso'), $singular),
-            "uploaded_to_this_item" => sprintf(__("Uploaded to this %s", 'pouso'), $singular),
-            "items_list" => sprintf(__("%s list", 'pouso'), $plural),
-            "items_list_navigation" => sprintf(__("%s list navigation", 'pouso'), $plural),
-            "filter_items_list" => sprintf(__("Filter %s list", 'pouso'), $plural)
+            "archives" => sprintf(__("%s Archives", 'wphelper'), $singular),
+            "attributes" => sprintf(__("%s Attributes", 'wphelper'), $singular),
+            "parent_item_colon" => sprintf(__("Parent %s:", 'wphelper'), $singular),
+            "all_items" => sprintf(__("All %s", 'wphelper'), $plural),
+            "add_new" => sprintf(__("Add %s", 'wphelper'), $singular),
+            "add_new_item" => sprintf(__("Add New %s", 'wphelper'), $singular),
+            "new_item" => sprintf(__("New %s", 'wphelper'), $singular),
+            "edit_item" => sprintf(__("Edit %s", 'wphelper'), $singular),
+            "update_item" => sprintf(__("Update %s", 'wphelper'), $singular),
+            "view_item" => sprintf(__("View %s", 'wphelper'), $singular),
+            "view_items" => sprintf(__("View %s", 'wphelper'), $plural),
+            "search_items" => sprintf(__("Search %s", 'wphelper'), $singular),
+            "insert_into_item" => sprintf(__("Insert into %s", 'wphelper'), $singular),
+            "uploaded_to_this_item" => sprintf(__("Uploaded to this %s", 'wphelper'), $singular),
+            "items_list" => sprintf(__("%s list", 'wphelper'), $plural),
+            "items_list_navigation" => sprintf(__("%s list navigation", 'wphelper'), $plural),
+            "filter_items_list" => sprintf(__("Filter %s list", 'wphelper'), $plural)
         );
         $args = wp_parse_args((array) $arguments, array(
             'label' => $singular,
             'labels' => $labels,
-            'description' => sprintf(__("Post Type for %s", 'pouso'), $plural),
+            'description' => sprintf(__("Post Type for %s", 'wphelper'), $plural),
             'supports' => array('title', 'editor', 'thumbnail', 'excerpt', 'page-attributes'),
             'taxonomies' => [],
             'hierarchical' => false,
@@ -330,17 +361,17 @@ class WpHelper {
             "name" => $plural,
             "singular_name" => $singular,
             "menu_name" => $plural,
-            "all_items" => sprintf(__("All %s", 'pouso'), $plural),
-            "parent_item" => sprintf(__("Parent %s", 'pouso'), $singular),
-            "parent_item_colon" => sprintf(__("Parent %s:", 'pouso'), $singular),
-            "new_item_name" => sprintf(__("New %s Name", 'pouso'), $singular),
-            "add_new_item" => sprintf(__("Add New %s", 'pouso'), $singular),
-            "edit_item" => sprintf(__("Edit %s", 'pouso'), $singular),
-            "update_item" => sprintf(__("Update %s", 'pouso'), $singular),
-            "separate_items_with_commas" => sprintf(__("Separate multiple %s with commas", 'pouso'), $plural),
-            "search_items" => sprintf(__("Search %s", 'pouso'), $plural),
-            "add_or_remove_items" => sprintf(__("Add or remove %s", 'pouso'), $plural),
-            "choose_from_most_used" => sprintf(__("Choose from the most used %s", 'pouso'), $plural)
+            "all_items" => sprintf(__("All %s", 'wphelper'), $plural),
+            "parent_item" => sprintf(__("Parent %s", 'wphelper'), $singular),
+            "parent_item_colon" => sprintf(__("Parent %s:", 'wphelper'), $singular),
+            "new_item_name" => sprintf(__("New %s Name", 'wphelper'), $singular),
+            "add_new_item" => sprintf(__("Add New %s", 'wphelper'), $singular),
+            "edit_item" => sprintf(__("Edit %s", 'wphelper'), $singular),
+            "update_item" => sprintf(__("Update %s", 'wphelper'), $singular),
+            "separate_items_with_commas" => sprintf(__("Separate multiple %s with commas", 'wphelper'), $plural),
+            "search_items" => sprintf(__("Search %s", 'wphelper'), $plural),
+            "add_or_remove_items" => sprintf(__("Add or remove %s", 'wphelper'), $plural),
+            "choose_from_most_used" => sprintf(__("Choose from the most used %s", 'wphelper'), $plural)
         );
         $args = wp_parse_args((array) $arguments, array(
             'labels' => $labels,

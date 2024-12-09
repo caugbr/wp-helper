@@ -78,16 +78,17 @@ class Popup {
         
             const topBar = tag('div', { class: 'top-bar' });
             header.appendChild(topBar);
+
+            if (this.useCloseButton) {
+                const close = tag('a', { href: '#', class: 'close-popup' }, '&times;');
+                header.appendChild(close);
+                close.addEventListener('click', event => {
+                    event.preventDefault();
+                    this.close();
+                });
+            }
         }
     
-        if (this.useCloseButton) {
-            const close = tag('a', { href: '#', class: 'close-popup' }, '&times;');
-            header.appendChild(close);
-            close.addEventListener('click', event => {
-                event.preventDefault();
-                this.close();
-            });
-        }
     
         const article = tag('article', {}, this.content);
         popup.appendChild(article);

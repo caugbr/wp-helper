@@ -8,6 +8,7 @@
 class Dialog {
     pop;
     isOpen = false;
+    autoFocus = true;
 
     constructor(title = '') {
         this.pop = new Popup();
@@ -20,7 +21,12 @@ class Dialog {
                 this.pop.close();
             }
         });
-        this.pop.on('open', () => this.isOpen = true);
+        this.pop.on('open', () => {
+            this.isOpen = true;
+            if (this.autoFocus) {
+                this.setFocus();
+            }
+        });
         this.pop.on('close', () => this.isOpen = false);
     }
 
@@ -64,8 +70,6 @@ class Dialog {
             }
             this.pop.setContent(`<div class="content-confirm">${txt}</div>`);
             this.pop.open();
-            const input = $single('.footer-buttons .button-primary');
-            input.focus();
         });
     }
     
@@ -81,21 +85,9 @@ class Dialog {
             }
             let html = '<div class="content-prompt">';
             html += `<label for="dialog_prompt">${label}</label>`;
-            html += `<input type="text" id="dialog_prompt" value="${placeholder}">`;
+            html += `<input type="text" id="dialog_prompt" placeholder="${placeholder}">`;
             html += '</div>';
             this.pop.setContent(html);
-            this.pop.on('open', () => {
-                const input = $single('#dialog_prompt');
-                input.focus();
-                input.select();
-                input.addEventListener('keyup', event => {
-                    const inp = event.target;
-                    if (inp.value && event.key == 'Enter') {
-                        resolve(inp.value);
-                        this.pop.close();
-                    }
-                });
-            });
             this.pop.open();
         });
     }
@@ -114,5 +106,22 @@ class Dialog {
         this.pop.setContent(`<div class="content-modal">${content}</div>`);
         this.pop.open();
         return () => this.pop.close();
+    }
+
+    setFocus() {
+        setTimeout(() => {
+            const first = $single('.popup-popup input[type="text"], .popup-popup button.button-primary');
+            if (first) {
+                first.focus();
+                if (first.matches('input[type="text"]')) {
+                    first.addEventListener('keyup', event => {
+                        if (first.value && event.key == 'Enter') {
+                            $single('.popup-popup button.button-primary').click();
+                            this.pop.close();
+                        }
+                    });
+                }
+            }
+        }, 80);
     }
 }

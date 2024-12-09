@@ -114,29 +114,3 @@ class Style {
         return style;
     }
 }
-
-// function turnBW() {
-//     let style = $single('style#bw-style');
-//     if (!style) {
-//         style = tag('style', { id: 'bw-style' });
-//         document.body.appendChild(style);
-//     }
-//     style.innerHTML = '';
-//     let bwRules = ['img { filter: gray; -webkit-filter: grayscale(1); filter: grayscale(1); }'];
-//     const styles = (new Style()).getStyles();
-//     styles.forEach(stl => {
-//         Array.from(stl.rules).forEach(rule => {
-//             const re = /((text-)?(background-)?color|background):\s*(#[a-f0-9]+|rgba?[^;]+);/;
-//             const found = rule.cssText.match(re);
-//             if (found) {
-//                 if ($single(rule.selector)) {
-//                     const col = new Color(found[4]);
-//                     if (col.rgb[0] != col.rgb[1] || col.rgb[1] != col.rgb[2]) {
-//                         bwRules.push(`${rule.selector} { ${found[1]}: ${col.toGrey()}; }`);
-//                     }
-//                 }
-//             }
-//         });
-//     });
-//     style.innerHTML = bwRules.join("\n");
-// }

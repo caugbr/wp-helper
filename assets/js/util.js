@@ -19,7 +19,16 @@ function rootEvent(selector, eventName, callback) {
             const elem = event.target.closest(selector);
             callback.call(elem, event);
         }
-    })
+    });
+}
+
+function beforeUnloadEvent(msg, condition) {
+    window.onbeforeunload = (event) => {
+        if (!!msg && condition()) {
+            event.returnValue = msg;
+            return msg;
+        }
+    };
 }
 
 // DOM
@@ -67,13 +76,21 @@ function $apply(selector, fnc, context) {
     return elems;
 }
 
+function insertAfter(newNode, refNode) {
+    if (refNode.parentNode) {
+        if (refNode.nextSibling) {
+            refNode.parentNode.insertBefore(newNode, refNode.nextSibling);
+        } else {
+            refNode.parentNode.appendChild(newNode);
+        }
+    }
+}
+  
+
 // Script
 
 function writeScript(src) {
-    const script = tag('script', {
-        src,
-        type: 'text/javascript'
-    });
+    const script = tag('script', { src, type: 'text/javascript' });
     document.head.appendChild(script);
 }
 
@@ -165,6 +182,57 @@ function showOnOption(combo, value, dependent) {
         }
     });
     combo.dispatchEvent(new Event('input'));
+}
+
+/**
+ * Check if form elements are filled
+ * @param {object} form DOM form element
+ * @param {array} exclude Array of strings / regular expressions
+ * @param {string} excludeBy Name of thee property to be tested
+ * @param {string} retType Return type - 'obj' | 'count'
+ * @returns Object with form info | Number of filled elements
+ */
+function filledFormElements(form, exclude = [], excludeBy = 'value', retType = 'obj') {
+    let vals = 0;
+    const elems = form.elements;
+    let ret = {
+        total: 0,
+        filled: 0,
+        filledNames: [],
+        skiped: [],
+        isEmpty: true
+    };
+    Array.from(elems).forEach(elem => {
+        if (elem.tagName == 'INPUT' && elem.type == 'hidden') {
+            ret.skiped.push('hidden:' + elem.name);
+            return true;
+        }
+        if (exclude.length) {
+            let cont;
+            exclude.forEach(rule => {
+                cont = false;
+                if (rule instanceof RegExp) {
+                    cont = rule.test(elem[excludeBy] ?? '');
+                }
+                if (typeof rule == 'string') {
+                    cont = (rule == elem[excludeBy] ?? '');
+                }
+                if (cont && !ret.skiped.includes(elem.name)) {
+                    ret.skiped.push(elem.name);
+                }
+            });
+            if (cont) {
+                return true;
+            }
+        }
+        if (/checkbox|radio/.test(elem.type) ? elem.checked : !!elem.value) {
+            vals++;
+            ret.filled = vals;
+            ret.isEmpty = false;
+            ret.filledNames.push(elem.name);
+        }
+    });
+    return retType == 'count' ? vals : ret;
 }
 
 // Style
