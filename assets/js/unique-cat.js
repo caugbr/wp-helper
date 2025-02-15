@@ -13,7 +13,7 @@ function uniqueCat(tax, postType, strategy = 'hide') {
     if (!typeInput || typeInput.value != postType || !checklist) {
         return false;
     }
-    const checkboxes = $list('input[type="checkbox"]');
+    const checkboxes = $list('input[type="checkbox"]', checklist);
     if (checkboxes.length) {
         Array.from(checkboxes).forEach(cb => {
             if (strategy == 'radio') {

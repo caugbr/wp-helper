@@ -34,4 +34,8 @@
 }
 .tabs .tab-content {
     display: none;
+    text-align: center;
+}
+.tabs .tab-content img {
+    margin: auto;
 }

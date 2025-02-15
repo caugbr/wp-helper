@@ -67,6 +67,16 @@ function $apply(selector, fnc, context) {
     return elems;
 }
 
+function insertAfter(newNode, refNode) {
+    if (refNode.parentNode) {
+        if (refNode.nextSibling) {
+            refNode.parentNode.insertBefore(newNode, refNode.nextSibling);
+        } else {
+            refNode.parentNode.appendChild(newNode);
+        }
+    }
+}
+
 // Script
 
 function writeScript(src) {
@@ -139,16 +149,23 @@ function setFormValues(form, values) {
     }
 }
 
-function formValues(form) {
+function formValues(form, excludeValues = []) {
     form = form.matches('form') ? form : form.closest('form');
     if (form) {
         let data = {};
         const dataf = new FormData(form);
-        dataf.forEach((value, key) => (data[key] = value));
+        dataf.forEach((value, key) => {
+            if (!excludeValues.length || !excludeValues.includes(value)) {
+                data[key] = value;
+            }
+        });
         return data;
     }
     return false;
 }
+
+// function createForm(data) {
+// }
 
 function showOnOption(combo, value, dependent) {
     if (!dependent.getAttribute('data-display')) {
@@ -289,4 +306,12 @@ function removeUrlParams(names, url = window.location.href) {
 
 function replaceUrl(url) {
     history.pushState(null, null, url);
+}
+
+function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
 }

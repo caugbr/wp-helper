@@ -1,0 +1,128 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: WP Helper\n"
+"POT-Creation-Date: 2024-08-11 08:00-0300\n"
+"PO-Revision-Date: 2024-08-11 15:00-0300\n"
+"Last-Translator: \n"
+"Language-Team: Cau Guanabara\n"
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Poedit 3.4.4\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: .git\n"
+
+#: wp-helper.php:266
+#, php-format
+msgid "%s Archives"
+msgstr "Arquivo de %s"
+
+#: wp-helper.php:267
+#, php-format
+msgid "%s Attributes"
+msgstr "Atributos do %s"
+
+#: wp-helper.php:268 wp-helper.php:335
+#, php-format
+msgid "Parent %s:"
+msgstr "%s pai:"
+
+#: wp-helper.php:269 wp-helper.php:333
+#, php-format
+msgid "All %s"
+msgstr "Todas as  %s"
+
+#: wp-helper.php:270
+#, php-format
+msgid "Add %s"
+msgstr "Adicionar %s"
+
+#: wp-helper.php:271 wp-helper.php:337
+#, php-format
+msgid "Add New %s"
+msgstr "Criar %s"
+
+#: wp-helper.php:272
+#, php-format
+msgid "New %s"
+msgstr "Nova %s"
+
+#: wp-helper.php:273 wp-helper.php:338
+#, php-format
+msgid "Edit %s"
+msgstr "Editar %s"
+
+#: wp-helper.php:274 wp-helper.php:339
+#, php-format
+msgid "Update %s"
+msgstr "Atualizar %s"
+
+#: wp-helper.php:275 wp-helper.php:276
+#, php-format
+msgid "View %s"
+msgstr "Ver %s"
+
+#: wp-helper.php:277 wp-helper.php:341
+#, php-format
+msgid "Search %s"
+msgstr "Buscar %s"
+
+#: wp-helper.php:278
+#, php-format
+msgid "Insert into %s"
+msgstr "Inserir em %s"
+
+#: wp-helper.php:279
+#, php-format
+msgid "Uploaded to this %s"
+msgstr "Subir para esta %s"
+
+#: wp-helper.php:280
+#, php-format
+msgid "%s list"
+msgstr "lista de %s"
+
+#: wp-helper.php:281
+#, php-format
+msgid "%s list navigation"
+msgstr ""
+
+#: wp-helper.php:282
+#, php-format
+msgid "Filter %s list"
+msgstr "Filtrar lista de %s"
+
+#: wp-helper.php:287
+#, php-format
+msgid "Post Type for %s"
+msgstr "Tipo de post para %s"
+
+#: wp-helper.php:334
+#, php-format
+msgid "Parent %s"
+msgstr "%s pai"
+
+#: wp-helper.php:336
+#, php-format
+msgid "New %s Name"
+msgstr "Novo nome para a %s"
+
+#: wp-helper.php:340
+#, php-format
+msgid "Separate multiple %s with commas"
+msgstr "Separe os %s com vírgulas"
+
+#: wp-helper.php:342
+#, php-format
+msgid "Add or remove %s"
+msgstr "Adicionar ou remover %s"
+
+#: wp-helper.php:343
+#, php-format
+msgid "Choose from the most used %s"
+msgstr "%s mais usados"
