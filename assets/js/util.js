@@ -26,20 +26,23 @@ function rootEvent(selector, eventName, callback) {
 
 function tag(tagName = 'div', attrs = {}, content = '') {
     const elem = document.createElement(tagName);
-    for (const key in attrs) {
-        elem.setAttribute(key, attrs[key]);
-    }
-    if (content) {
-        if (typeof content == 'string') {
-            elem.innerHTML = content;
-        } else {
-            if (content instanceof Array) {
-                content.forEach(node => elem.appendChild(node));
-            } else {
-                elem.appendChild(content);
-            }
+    Object.entries(attrs).forEach(([key, value]) => elem.setAttribute(key, value));
+
+    const appendContent = item => {
+        if (typeof item === 'string') {
+            const fragment = document.createRange().createContextualFragment(item);
+            elem.appendChild(fragment);
+        } else if (item instanceof Node) {
+            elem.appendChild(item);
         }
+    };
+
+    if (Array.isArray(content)) {
+        content.forEach(appendContent);
+    } else {
+        appendContent(content);
     }
+
     return elem;
 }
 
@@ -124,9 +127,7 @@ function toCamelCase(str) {
 // Date
 
 function localDate(...args) {
-    const date = args[0] instanceof Date ? args[0] : new Date(...args);
-    date.setTime(date.getTime() + (date.getTimezoneOffset() * 60 * 1000));
-    return date;
+    return new Date(...args).toLocaleString("en-US", { timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone });
 }
 
 function addDays(days, date) {
@@ -163,9 +164,6 @@ function formValues(form, excludeValues = []) {
     }
     return false;
 }
-
-// function createForm(data) {
-// }
 
 function showOnOption(combo, value, dependent) {
     if (!dependent.getAttribute('data-display')) {
@@ -246,36 +244,30 @@ function increaseFonts(wrapper, percentage) {
 
 // Ajax
 
-function fetchData(url, method = 'GET', data = {}, filter = 'json') {
-    const options = {
-        method,
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        }
-    };
-    if (method === 'POST') {
-        options.body = new URLSearchParams(data).toString();
-    }
-    if (method === 'GET') {
-        url = addUrlParams(data, url);
-    }
-    const ret = fetch(url, options);
-    if (filter) {
-        ret.then(response => response[filter]());
-    }
-    return ret;
+function fetchData(url, method = 'GET', data = {}, responseType = 'json') {
+    return req(url, { method, data, headers, responseType });
 }
 
 function ajax(url, data = {}, method = 'GET', headers = {}) {
+    return req(url, { method, data, headers });
+}
+
+function req(url, { method = 'GET', data = {}, headers = {}, responseType = '' } = {}) {
     headers = { 'Content-Type': 'application/x-www-form-urlencoded', ...headers };
     let options = { method, headers };
+
     if (method.toUpperCase() === 'POST') {
         options.body = new URLSearchParams(data).toString();
-    } else {
+    } else if (method.toUpperCase() === 'GET' && Object.keys(data).length) {
         url = addUrlParams(data, url);
     }
-    return fetch(url, options);
+
+    return fetch(url, options).then(response => {
+        const validResponseTypes = ['json', 'text', 'blob', 'arrayBuffer', 'formData'];
+        return validResponseTypes.includes(responseType) ? response[responseType]() : response;
+    });
 }
+
 
 // URL
 
