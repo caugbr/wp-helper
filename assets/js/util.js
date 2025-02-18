@@ -22,6 +22,17 @@ function rootEvent(selector, eventName, callback) {
     })
 }
 
+function exitWarning(enable = true) {
+    if (enable) {
+        window.onbeforeunload = (event) => {
+            event.preventDefault();
+            return (event.returnValue = "Tem certeza que deseja sair?");
+        };
+    } else {
+        window.onbeforeunload = null;
+    }
+}
+
 // DOM
 
 function tag(tagName = 'div', attrs = {}, content = '') {
